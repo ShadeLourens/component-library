@@ -1,26 +1,281 @@
-@import "tailwindcss";
+/* =============================================================
+   Portfolio design tokens — globals.css
+   Palette + typography + spacing + components, one file.
+
+   Type:  Headings — Instrument Serif (400 only — that's the look)
+          Body     — Google Sans Flex (variable: wght + opsz)
+
+   NOTE FOR NEXT.JS: prefer `next/font/google` (zero layout shift,
+   self-hosted). If your Next version doesn't list Google Sans Flex
+   yet (it joined Google Fonts Nov 2025), keep this @import.
+   ============================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Google+Sans+Flex:opsz,wght@6..144,300..800&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---- Raw palette (source of truth — don't use these directly in components) ---- */
+  --plum-noir:      #351E28;
+  --plum-surface:   #40252F;
+  --plum-deep:      #2A1720;
+  --crimson:        #862D4A;
+  --crimson-hover:  #732541;
+  --crimson-active: #5F1E33;
+  --ice-sky:        #B7D1EA;  /* PANEL ONLY, never text */
+  --vanilla:        #FBF7F0;
+  --vanilla-raised: #F5EFE4;
+
+  /* ---- Semantic surface tokens ---- */
+  --color-bg:            var(--vanilla);
+  --color-surface:       var(--vanilla-raised);
+  --color-surface-panel: var(--ice-sky);
+  --color-surface-dark:  var(--plum-noir);
+  --color-surface-dark-raised: var(--plum-surface);
+
+  /* ---- Semantic text tokens ---- */
+  --color-text:          var(--plum-noir);   /* [14.4:1] */
+  --color-text-muted:    #5C444B;            /* [8.3:1]  */
+  --color-text-on-dark:  var(--vanilla);     /* [14.4:1] */
+  --color-text-on-panel: var(--plum-noir);   /* [9.7:1]  */
+
+  /* ---- Accent (interactive) tokens ---- */
+  --color-accent:        var(--crimson);
+  --color-accent-hover:  var(--crimson-hover);
+  --color-accent-active: var(--crimson-active);
+  --color-on-accent:     var(--vanilla);
+
+  /* ---- Borders & focus ---- */
+  --color-border:        rgba(53, 30, 40, 0.14);
+  --color-border-strong: rgba(53, 30, 40, 0.28);
+  --color-focus-ring:    var(--crimson);
+
+  /* =============================================================
+     TYPOGRAPHY
+     ============================================================= */
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body:    'Google Sans Flex', system-ui, -apple-system, sans-serif;
+
+  /* Fluid type scale (mobile → desktop without breakpoints).
+     Editorial = big display gap: h1 is ~3.5× body, not 2×. */
+  --text-display: clamp(2.75rem, 6vw + 1rem, 4.5rem);   /* hero        */
+  --text-h1:      clamp(2.25rem, 4vw + 1rem, 3.5rem);
+  --text-h2:      clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+  --text-h3:      clamp(1.375rem, 1.5vw + 0.75rem, 1.75rem);
+  --text-body-lg: 1.125rem;   /* intros, lede paragraphs */
+  --text-body:    1rem;
+  --text-small:   0.875rem;   /* captions, meta          */
+  --text-eyebrow: 0.8125rem;  /* section labels          */
+
+  /* Instrument Serif is only 400 — headings are NEVER bold.
+     Weight expression lives in Google Sans Flex instead. */
+  --weight-body:     400;
+  --weight-medium:   500;   /* buttons, links, UI labels */
+  --weight-semibold: 600;   /* eyebrows, table headers   */
+
+  --leading-display: 1.05;  /* tight = editorial          */
+  --leading-heading: 1.15;
+  --leading-body:    1.6;   /* generous = accessible      */
+
+  --tracking-display: -0.01em;
+  --tracking-eyebrow: 0.08em;
+
+  /* =============================================================
+     SPACING (4px base) & LAYOUT
+     ============================================================= */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;    /* between page sections */
+
+  --content-width: 72rem;    /* main container */
+  --prose-width:   42rem;    /* readable line length — 65–70ch */
+
+  /* =============================================================
+     SHAPE & ELEVATION
+     ============================================================= */
+  --radius:      8px;      /* inputs, tags, code blocks */
+  --radius-card: 16px;
+  --radius-pill: 999px;    /* buttons — the modern round look */
+
+  --shadow-card:  0 1px 2px rgba(42, 23, 32, 0.05), 0 4px 12px rgba(42, 23, 32, 0.06);
+  --shadow-hover: 0 2px 4px rgba(42, 23, 32, 0.06), 0 8px 24px rgba(42, 23, 32, 0.10);
+
+  --transition: 160ms ease;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* =============================================================
+   BASE
+   ============================================================= */
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;                    /* the only weight it has */
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-display);
+  margin: 0 0 var(--space-4);
+}
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
+
+.display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 400;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+/* Editorial accent: italicize one key word in a heading */
+.display em, h1 em, h2 em {
+  font-style: italic;
+  color: var(--color-accent);         /* crimson on vanilla [7.9:1] ✓ */
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-muted);     /* [8.3:1] ✓ */
+}
+
+.lede {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-muted);
+  max-width: var(--prose-width);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: 1.5px;   /* underline, not colour alone */
+  text-underline-offset: 3px;
+}
+a:hover { color: var(--color-accent-hover); }
+
+/* =============================================================
+   BUTTONS — pill, modern, 44px+ touch target (WCAG 2.5.8)
+   ============================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--transition), border-color var(--transition),
+              box-shadow var(--transition), transform var(--transition);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);      /* vanilla on crimson [7.9:1] ✓ */
+  border: none;
+}
+.btn-primary:hover  { background: var(--color-accent-hover); box-shadow: var(--shadow-hover); }
+.btn-primary:active { background: var(--color-accent-active); transform: translateY(1px); box-shadow: none; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border-strong);
+}
+.btn-secondary:hover  { border-color: var(--color-text); background: var(--color-surface); }
+.btn-secondary:active { transform: translateY(1px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border: none;
+}
+.btn-ghost:hover { background: rgba(134, 45, 74, 0.08); }
+
+/* Sizes */
+.btn-sm { min-height: 36px; padding: 0 var(--space-4); font-size: var(--text-small); }
+.btn-lg { min-height: 52px; padding: 0 var(--space-8); font-size: var(--text-body-lg); }
+
+/* Disabled — visibly inert, keeps shape */
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-border);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* On dark plum sections, primary flips to vanilla-on-plum */
+.section-dark .btn-primary {
+  background: var(--color-text-on-dark);
+  color: var(--plum-noir);            /* [14.4:1] ✓ — crimson-on-plum is banned (1.8:1) */
+}
+.section-dark .btn-primary:hover { background: var(--vanilla-raised); }
+
+/* =============================================================
+   SURFACES
+   ============================================================= */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-hover); }
+
+.panel {
+  background: var(--color-surface-panel);
+  color: var(--color-text-on-panel);
+  border-radius: var(--radius-card);
+  padding: var(--space-8);
+}
+
+.section-dark {
+  background: var(--color-surface-dark);
+  color: var(--color-text-on-dark);
+  padding: var(--space-24) 0;
+}
+.section-dark .card {
+  background: var(--color-surface-dark-raised);
+  border-color: rgba(251, 247, 240, 0.12);
+}
+
+/* =============================================================
+   ACCESSIBILITY GUARANTEES
+   ============================================================= */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);       /* keeps the ring soft on pills too */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
