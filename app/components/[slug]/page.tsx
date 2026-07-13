@@ -1,5 +1,9 @@
 import { notFound } from "next/navigation";
-import { components } from "@/content/components";
+import { components, getComponent } from "@/content/components";
+
+export function generateStaticParams() {
+  return components.map((c) => ({ slug: c.slug }));
+}
 
 export default async function ComponentPage({
   params,
@@ -7,16 +11,14 @@ export default async function ComponentPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const component = components.find((c) => c.slug === slug);
+  const doc = getComponent(slug);
 
-  if (!component) {
-    notFound();
-  }
+  if (!doc) notFound();
 
   return (
-    <main style={{ maxWidth: 640, margin: "4rem auto", padding: "0 1rem" }}>
-      <h1>{component.name}</h1>
-      <p>{component.description}</p>
+    <main style={{ maxWidth: 720, margin: "3rem auto", padding: "0 1rem" }}>
+      <h1>{doc.name}</h1>
+      <p>{doc.description}</p>
     </main>
   );
 }
